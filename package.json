@@ -1,0 +1,13 @@
+{
+  "name": "mvc",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "build": "rm -rf dist && rm -rf .cache && parcel build src/index.html --no-minify --public-url ./"
+  },
+  "author": "Shane-Peterson <liuzhelei.hwc@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "jquery": "^3.6.0"
+  }
+}
