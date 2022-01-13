@@ -85,8 +85,8 @@ body > .page > section {
 #app4 .circle {
     border: 1px solid red;
     border-radius: 50%;
-    width: 30vw;
-    height: 30vw;
+    width: 20vw;
+    height: 20vw;
 }
 
 #app4 .circle.active {
