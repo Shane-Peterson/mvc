@@ -1,21 +1,29 @@
-class Model {
-  constructor(options){
-    ['data', 'update', 'create', 'delete', 'get'].forEach((key) => {
+import EventBus from "../EventBus"
+
+class Model extends EventBus {
+  constructor(options) {
+    super()
+    const key = ['data', 'update', 'create', 'delete', 'get']
+    key.forEach((key) => {
       if (key in options) {
         this[key] = options[key]
       }
     })
   }
-  create(){
+
+  create() {
     console && console.error && console.error("你还没有实现 create")
   }
-  delete(){
+
+  delete() {
     console && console.error && console.error("你还没有实现 delete")
   }
-  update(){
+
+  update() {
     console && console.error && console.error("你还没有实现 update")
   }
-  get(){
+
+  get() {
     console && console.error && console.error("你还没有实现 get")
   }
 }

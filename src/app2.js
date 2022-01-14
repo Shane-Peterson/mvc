@@ -1,8 +1,8 @@
 import "./app2.css";
 import $ from "jquery";
 import Model from "./base/Model";
+import View from "./base/View";
 
-const eventBus = $({})
 
 const localKey = 'app2.index'
 const m = new Model({
@@ -10,17 +10,18 @@ const m = new Model({
     index: parseInt(localStorage.getItem(localKey)) || 0
   },
   update(data) {
-    Object.assign(m.data, data)
-    eventBus.trigger('index:updated')
-    localStorage.setItem(localKey, JSON.stringify(m.data.index))
+    Object.assign(this.data, data)
+    this.trigger('updated')
+    localStorage.setItem(localKey, JSON.stringify(this.data.index))
   }
 })
 
-
-const view = {
-  el: null,
-  html(index) {
-    return `
+const init = (el) => {
+  new View({
+    el: el,
+    data: m.data,
+    html(index) {
+      return `
       <div>
         <ol class="tab-bar">
           <li class="${index === 0 ? 'selected' : ''}" data-index="0">Vue</li>
@@ -36,40 +37,24 @@ const view = {
         </ol>
       </div>
     `
-  },
-  render(index) {
-    if (this.el.children.length !== 0) {
-      this.el.empty()
+    },
+    render(data) {
+      const index = data.index
+      if (this.el.children.length !== 0) {
+        this.el.empty()
+      }
+      $(this.html(index)).appendTo(this.el)
+    },
+    events: {
+      "click .tab-bar>li": "click"
+    },
+    click(e) {
+      const index = parseInt(e.currentTarget.dataset.index);
+      m.update({index: index})
     }
-    $(this.html(index)).appendTo(this.el)
-  },
-  init(container) {
-    this.el = $(container)
-    this.render(m.data.index)
-    this.autoBindEvents()
-    eventBus.on('index:updated', () => {
-      this.render(m.data.index)
-    })
-  },
-  events: {
-    "click .tab-bar>li": "click",
-  },
-  click(e) {
-    const index = parseInt(e.currentTarget.dataset.index);
-    m.update({index: index})
-  },
-
-  autoBindEvents() {
-    for (let key in this.events) {
-      const value = this[this.events[key]]
-      const spaceIndex = key.indexOf(' ')
-      const part1 = key.slice(0, spaceIndex)
-      const part2 = key.slice(spaceIndex + 1)
-      this.el.on(part1, part2, value)
-
-    }
-  }
+  })
 }
 
-export default view
+
+export default init
 
