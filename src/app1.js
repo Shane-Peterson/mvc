@@ -1,59 +1,49 @@
 import "./app1.css";
-import $ from "jquery";
-import Model from "./base/Model";
-import View from "./base/View";
-
-const m = new Model({
-  data: {
-    n: Number(localStorage.getItem('n')) || 100,
-  },
-  update: function (data) {
-    Object.assign(this.data, data)
-    this.trigger('updated')
-    localStorage.setItem('n', JSON.stringify(this.data.n))
-  }
-});
+import Vue from "vue"
 
 const init = (el) => {
-  new View({
-    data: m.data,
+  const m = {
+    get(){
+      return Number(localStorage.getItem('n')) || 100
+    },
+    set(n){
+      return localStorage.setItem('n', JSON.stringify(n))
+    }
+  }
+  new Vue({
     el: el,
-    html: `
-      <div>
+    data: {n: m.get()},
+    watch: {
+      n(){
+        m.set(this.n)
+      }
+    },
+    template: `
+    <section id="app1">
         <div class="output"><span id="number">{{n}}</span></div>
         <div class="actions">
-          <button id="add1">+1</button>
-          <button id="minus1">-1</button>
-          <button id="mul2">*2</button>
-          <button id="div2">÷2</button>
+          <button @click="add">+1</button>
+          <button @click="minus">-1</button>
+          <button @click="mul">*2</button>
+          <button @click="div">÷2</button>
         </div>
-      </div>
+      </section>
     `,
-    render: function (data) {
-      const n = data.n
-      if (this.el.children.length !== 0) {
-        this.el.empty()
+    methods: {
+      add() {
+        this.n += 1
+      },
+      minus() {
+        this.n -= 1
+      },
+      mul() {
+        this.n *= 2
+      },
+      div() {
+        this.n /= 2
       }
-      $(this.html.replace("{{n}}", JSON.stringify(n))).appendTo(this.el)
-    },
-    events: {
-      "click #add1": "add",
-      "click #minus1": "minus",
-      "click #mul2": "mul",
-      "click #div2": "div"
-    },
-    add() {
-      m.update({n: m.data.n += 1})
-    },
-    minus() {
-      m.update({n: m.data.n -= 1})
-    },
-    mul() {
-      m.update({n: m.data.n *= 2})
-    },
-    div() {
-      m.update({n: m.data.n /= 2})
     }
+
   })
 }
 
